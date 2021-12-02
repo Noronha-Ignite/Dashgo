@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { useEffect } from 'react';
 import {
   Flex,
   Box,
@@ -17,7 +18,6 @@ import {
 } from '@chakra-ui/react';
 import { RiAddLine, RiPencilLine } from 'react-icons/ri';
 
-
 import { Header } from '../../components/Header';
 import { Pagination } from '../../components/Pagination';
 import { Sidebar } from '../../components/Sidebar';
@@ -27,6 +27,12 @@ export default function UserList() {
     base: false,
     lg: true,
   });
+
+  useEffect(() => {
+    fetch('http://localhost:3000/api/users')
+      .then((response) => response.json())
+      .then((data) => console.log(data));
+  }, []);
 
   return (
     <Box>
@@ -86,10 +92,18 @@ export default function UserList() {
                     size='sm'
                     fontSize='sm'
                     colorScheme='purple'
-                    leftIcon={isWideVersion && <Icon as={RiPencilLine} fontSize='16' mx={!isWideVersion && '0'} />}
+                    leftIcon={
+                      isWideVersion && (
+                        <Icon as={RiPencilLine} fontSize='16' mx={!isWideVersion && '0'} />
+                      )
+                    }
                     cursor='pointer'
                   >
-                    {isWideVersion ? 'Editar' : <Icon as={RiPencilLine} fontSize='16' mx={!isWideVersion && '0'} />}
+                    {isWideVersion ? (
+                      'Editar'
+                    ) : (
+                      <Icon as={RiPencilLine} fontSize='16' mx={!isWideVersion && '0'} />
+                    )}
                   </Button>
                 </Td>
               </Tr>
@@ -112,11 +126,18 @@ export default function UserList() {
                     size='sm'
                     fontSize='sm'
                     colorScheme='purple'
-                    leftIcon={isWideVersion && <Icon as={RiPencilLine} fontSize='16' mx={!isWideVersion && '0'} />}
+                    leftIcon={
+                      isWideVersion && (
+                        <Icon as={RiPencilLine} fontSize='16' mx={!isWideVersion && '0'} />
+                      )
+                    }
                     cursor='pointer'
-                    
                   >
-                    {isWideVersion ? 'Editar' : <Icon as={RiPencilLine} fontSize='16' mx={!isWideVersion && '0'} />}
+                    {isWideVersion ? (
+                      'Editar'
+                    ) : (
+                      <Icon as={RiPencilLine} fontSize='16' mx={!isWideVersion && '0'} />
+                    )}
                   </Button>
                 </Td>
               </Tr>
