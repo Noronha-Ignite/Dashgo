@@ -2,8 +2,15 @@ import { useQuery } from 'react-query';
 import { api } from '../services/api';
 import { User } from '../services/mirage';
 
-export const getUsers = async () => {
-  const { data } = await api.get<{ users: User[] }>('users');
+export const getUsers = async (page: number, size: number) => {
+  const { data, headers } = await api.get<{ users: User[] }>('users', {
+    params: {
+      page,
+      per_page: size,
+    },
+  });
+
+  const totalCount = Number(headers['x-total-count']);
 
   const users = data.users.map<User>((user) => ({
     id: user.id,
@@ -16,11 +23,11 @@ export const getUsers = async () => {
     }),
   }));
 
-  return users;
+  return { users, totalCount };
 };
 
-export function useUsers() {
-  return useQuery('users', getUsers, {
+export function useUsers(page: number, size: number) {
+  return useQuery(['users', { page, size }], () => getUsers(page, size), {
     staleTime: 1000 * 5, // 5 seconds
   });
 }
