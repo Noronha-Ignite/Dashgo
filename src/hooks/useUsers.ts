@@ -1,4 +1,5 @@
 import { useQuery } from 'react-query';
+
 import { api } from '../services/api';
 import { User } from '../services/mirage';
 
@@ -28,6 +29,6 @@ export const getUsers = async (page: number, size: number) => {
 
 export function useUsers(page: number, size: number) {
   return useQuery(['users', { page, size }], () => getUsers(page, size), {
-    staleTime: 1000 * 5, // 5 seconds
+    staleTime: 1000 * 60 * 10, // 10 minutes
   });
 }
