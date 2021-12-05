@@ -1,9 +1,14 @@
-import { useQuery } from 'react-query';
+import { useQuery, UseQueryOptions } from 'react-query';
 
 import { api } from '../services/api';
 import { User } from '../services/mirage';
 
-export const getUsers = async (page: number, size: number) => {
+type UsersData = {
+  users: User[];
+  totalCount: number;
+};
+
+export const getUsers = async (page: number, size: number): Promise<UsersData> => {
   const { data, headers } = await api.get<{ users: User[] }>('users', {
     params: {
       page,
@@ -27,8 +32,18 @@ export const getUsers = async (page: number, size: number) => {
   return { users, totalCount };
 };
 
-export function useUsers(page: number, size: number) {
-  return useQuery(['users', { page, size }], () => getUsers(page, size), {
+export function useUsers(page: number, size: number, options?: UseQueryOptions) {
+  const queryOptions: UseQueryOptions<UsersData> = {
     staleTime: 1000 * 60 * 10, // 10 minutes
-  });
+  };
+
+  if (options) {
+    queryOptions.initialData = options.initialData as UsersData;
+  }
+
+  return useQuery<UsersData>(
+    ['users', { page, size }],
+    () => getUsers(page, size),
+    queryOptions
+  );
 }

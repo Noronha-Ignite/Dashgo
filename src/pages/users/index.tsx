@@ -1,3 +1,4 @@
+import { GetServerSideProps } from 'next';
 import { useState } from 'react';
 import NextLink from 'next/link';
 import {
@@ -23,13 +24,33 @@ import { RiAddLine, RiPencilLine } from 'react-icons/ri';
 import { Header } from '../../components/Header';
 import { Pagination } from '../../components/Pagination';
 import { Sidebar } from '../../components/Sidebar';
-import { useUsers } from '../../hooks/useUsers';
+import { getUsers, useUsers } from '../../hooks/useUsers';
 import { queryClient } from '../../services/queryClient';
 import { api } from '../../services/api';
+import { User } from '../../services/mirage';
 
-export default function UserList() {
+interface UserListProps {
+  users: User[];
+  totalCount: number;
+  error: boolean;
+}
+
+export default function UserList({
+  users,
+  totalCount,
+  error: initialDataError,
+}: UserListProps) {
   const [page, setPage] = useState(1);
-  const { data, isLoading, isFetching, error } = useUsers(page, 10);
+  const { data, isLoading, isFetching, error } = useUsers(
+    page,
+    10,
+    !initialDataError && {
+      initialData: {
+        users,
+        totalCount,
+      },
+    }
+  );
 
   const isWideVersion = useBreakpointValue({
     base: false,
@@ -160,3 +181,21 @@ export default function UserList() {
     </Box>
   );
 }
+
+export const getServerSideProps: GetServerSideProps = async () => {
+  try {
+    const { users, totalCount } = await getUsers(1, 10);
+
+    return {
+      props: {
+        users,
+        totalCount,
+        error: false,
+      },
+    };
+  } catch (err) {
+    return {
+      props: { error: true },
+    };
+  }
+};
